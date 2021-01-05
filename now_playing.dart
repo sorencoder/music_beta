@@ -9,16 +9,26 @@ void main() {
 class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
-         theme: ThemeData(
-    accentTextTheme: TextTheme(bodyText2: TextStyle(color: Colors.white)),
-  ),
+        theme: ThemeData(
+          accentTextTheme: TextTheme(bodyText2: TextStyle(color: Colors.white)),
+        ),
         debugShowCheckedModeBanner: false,
         home: PlayerPage());
   }
 }
 
-class PlayerPage extends StatelessWidget {
-  final rating = 20.0;
+class PlayerPage extends StatefulWidget {
+  @override
+  _PlayerPageState createState() => _PlayerPageState();
+}
+
+class _PlayerPageState extends State<PlayerPage> {
+  double _currentSliderValue = 20;
+  bool _isPlaying = true;
+  bool _isFavourite = false;
+  bool _isShuffle = false;
+  String artistName = 'Artist Name';
+  String songName = 'Song Name';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +61,7 @@ class PlayerPage extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            Text('Song Name',
+            Text('$songName',
                 style: TextStyle(color: Colors.black, fontSize: 30)),
 //             Container(
 // //               height:100,
@@ -62,28 +72,66 @@ class PlayerPage extends StatelessWidget {
 //             ),
             SizedBox(height: 10),
             Text(
-              'Artist Name',
+              '$artistName',
               style: TextStyle(color: Colors.black, fontSize: 15),
             ),
             SizedBox(height: 55),
             Slider(
-              onChanged: null,
-              inactiveColor: Colors.black,
-              value: rating,
+              onChanged: (double value) {
+                setState(() {
+                  _currentSliderValue = value;
+                });
+              },
+              inactiveColor: Colors.teal,
+              value: _currentSliderValue,
               max: 100,
               min: 0,
-//               label: rating.toString(),
-              activeColor: Colors.black,
+              label: _currentSliderValue.round().toString(),
+//               activeColor: Colors.black,
             ),
             SizedBox(height: 30),
+
             Row(
-              mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                Icon(Icons.favorite,color:Colors.black),
-                Icon(Icons.arrow_back,color:Colors.black),
-                Icon(Icons.play_circle_fill_rounded,size:60,color:Colors.black),
-                Icon(Icons.arrow_forward,color:Colors.black),
-                Icon(Icons.shuffle,color:Colors.black)
+//                  InkWell(
+//                  child:Icon(Icons.favorite, color: Colors.black),
+//                    onTap:(){}
+//                  ),
+                IconButton(
+                    icon: Icon(
+                        _isFavourite ? Icons.favorite : Icons.favorite_border,
+                        color: Colors.black),
+                    onPressed: () {
+                      setState(() {
+                        _isFavourite = !_isFavourite;
+                      });
+                    }),
+                IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.black),
+                    onPressed: () {}),
+                OutlineButton(
+                    child: Icon(
+                        _isPlaying
+                            ? Icons.play_circle_outline
+                            : Icons.pause_circle_filled_rounded,
+                        size: 50,
+                        color: Colors.black),
+                    onPressed: () {
+                      setState(() {
+                        _isPlaying = !_isPlaying;
+                      });
+                    }),
+                IconButton(
+                    icon: Icon(Icons.arrow_forward, color: Colors.black),
+                    onPressed: () {}),
+                IconButton(
+                    icon: Icon(_isShuffle ? Icons.shuffle : Icons.loop),
+                    onPressed: () {
+                      setState(() {
+                        _isShuffle = !_isShuffle;
+                      });
+                    }),
               ],
             ),
           ],
