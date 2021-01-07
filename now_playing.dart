@@ -75,7 +75,7 @@ class _PlayerPageState extends State<PlayerPage> {
               '$artistName',
               style: TextStyle(color: Colors.black, fontSize: 15),
             ),
-            SizedBox(height: 55),
+            SizedBox(height: 25),
             Slider(
               onChanged: (double value) {
                 setState(() {
@@ -84,11 +84,30 @@ class _PlayerPageState extends State<PlayerPage> {
               },
               inactiveColor: Colors.teal,
               value: _currentSliderValue,
-              max: 100,
+              max: 15,
               min: 0,
               label: _currentSliderValue.round().toString(),
 //               activeColor: Colors.black,
             ),
+            Padding(
+            padding: EdgeInsets.fromLTRB(20,0,15,0),
+                child:Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Container(
+                width:30,
+//                 color:Colors.red,
+              child:Text("1:25"),
+              ),
+              Container(
+                width:30,
+//                 color:Colors.green,
+              child:Text("7:30"),
+              ),
+            ],
+            ),
+            ),
+          
             SizedBox(height: 30),
 
             Row(
