@@ -129,7 +129,7 @@ class _PlayerPageState extends State<PlayerPage> {
                 IconButton(
                     icon: Icon(Icons.arrow_back, color: Colors.black),
                     onPressed: () {}),
-                OutlineButton(
+                FlatButton(
                     child: Icon(
                         _isPlaying
                             ? Icons.play_circle_outline
