@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:audioplayers/audioplayers.dart';
 final Color darkBlue = Color.fromARGB(255, 18, 32, 47);
 
 void main() {
@@ -23,12 +23,28 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
+  AudioPlayer audioplayer = AudioPlayer();
+  @override
+  void initState() {
+    super.initState();
+    initAudio();
+  }
   double _currentSliderValue = 20;
   bool _isPlaying = true;
   bool _isFavourite = false;
   bool _isShuffle = false;
   String artistName = 'Artist Name';
   String songName = 'Song Name';
+   initAudio(){
+    audioplayer.play('https://firebasestorage.googleapis.com/v0/b/music-player-7fa3e.appspot.com/o/PALE%20KOTNE%20AATU%20SANGAT%20KULI%20MUHNI%20KIDINA%20.mp3?alt=media&token=388261b8-64ea-4c75-ada6-c9ec5065f3ed');
+  }
+  pauseAudio(){
+    audioplayer.pause();
+  }
+  resumeAudio(){
+    audioplayer.resume();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -132,12 +148,13 @@ class _PlayerPageState extends State<PlayerPage> {
                 FlatButton(
                     child: Icon(
                         _isPlaying
-                            ? Icons.play_circle_outline
-                            : Icons.pause_circle_filled_rounded,
+                            ? Icons.pause_circle_filled_rounded
+                            : Icons.play_circle_outline,
                         size: 50,
                         color: Colors.black),
                     onPressed: () {
                       setState(() {
+                        _isPlaying? resumeAudio():pauseAudio();
                         _isPlaying = !_isPlaying;
                       });
                     }),
