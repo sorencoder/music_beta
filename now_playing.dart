@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
+
 final Color darkBlue = Color.fromARGB(255, 18, 32, 47);
 
 void main() {
@@ -23,28 +24,65 @@ class PlayerPage extends StatefulWidget {
 }
 
 class _PlayerPageState extends State<PlayerPage> {
-  AudioPlayer audioplayer = AudioPlayer();
-  @override
-  void initState() {
-    super.initState();
-    initAudio();
-  }
+  AudioPlayer audioPlayer = AudioPlayer();
+//   @override
+//   void initState() {
+//     super.initState();
+//     initAudio();
+//   }
   double _currentSliderValue = 20;
-  bool _isPlaying = true;
+  bool _isPlaying = false;
   bool _isFavourite = false;
   bool _isShuffle = false;
   String artistName = 'Artist Name';
   String songName = 'Song Name';
-   initAudio(){
-    audioplayer.play('https://firebasestorage.googleapis.com/v0/b/music-player-7fa3e.appspot.com/o/PALE%20KOTNE%20AATU%20SANGAT%20KULI%20MUHNI%20KIDINA%20.mp3?alt=media&token=388261b8-64ea-4c75-ada6-c9ec5065f3ed');
-  }
-  pauseAudio(){
-    audioplayer.pause();
-  }
-  resumeAudio(){
-    audioplayer.resume();
-  }
+  Duration duration;
+  Duration position;
+  String audioState;
   
+  initAudio() {
+    audioPlayer.onDurationChanged.listen((durationSong){
+      // print('Total $d');
+      setState(() {
+        duration = durationSong;
+      });
+    });
+
+    audioPlayer.onAudioPositionChanged.listen((positionSong){
+      // print('Current $p');
+        setState(() {
+          position = positionSong;
+        });
+    });
+    audioPlayer.onPlayerStateChanged.listen((playerState) {
+      if (playerState == AudioPlayerState.STOPPED) {
+        audioState = "Stopped";
+        // position = "0:00";
+      }
+      if (playerState == AudioPlayerState.PLAYING) audioState = "Playing";
+      if (playerState == AudioPlayerState.PAUSED) audioState = "Paused";
+      setState(() {});
+    });
+  }
+    @override
+  void initState() {
+    initAudio();
+    playAudio();
+    super.initState();
+  }
+  playAudio() async {
+      await audioPlayer.play('https://firebasestorage.googleapis.com/v0/b/fir-9e06b.appspot.com/o/DINGRA%20KORA%20%20NEW%20SANTHALI%20VIDEO%20%20ATISH%20TUDU%20%20ASHA%20KIRAN%20TUDU%20%20SHYAM%20MARANDI%20%20RESHMA%20HEMBROM.mp3?alt=media&token=e56556a6-b458-47d0-9c1f-b4536449076f');
+      
+  }
+  pauseAudio() async{
+    await audioPlayer.pause();
+    // int result = 0;
+  }
+  resumeAudio() async{
+    await audioPlayer.resume();
+    // int result = 1;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,15 +108,13 @@ class _PlayerPageState extends State<PlayerPage> {
 //               padding: EdgeInsets.all(8.0),
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(
-                      'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
+                  image: NetworkImage('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
                 ),
                 borderRadius: BorderRadius.circular(5.0),
               ),
             ),
             SizedBox(height: 10),
-            Text('$songName',
-                style: TextStyle(color: Colors.black, fontSize: 30)),
+            Text('$songName', style: TextStyle(color: Colors.black, fontSize: 30)),
 //             Container(
 // //               height:100,
 // //               width:100,
@@ -106,24 +142,24 @@ class _PlayerPageState extends State<PlayerPage> {
 //               activeColor: Colors.black,
             ),
             Padding(
-            padding: EdgeInsets.fromLTRB(20,0,15,0),
-                child:Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              Container(
-                width:30,
+              padding: EdgeInsets.fromLTRB(20, 0, 15, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    width: 30,
 //                 color:Colors.red,
-              child:Text("1:25"),
-              ),
-              Container(
-                width:30,
+                    child: Text(position.toString().split('.').first),
+                  ),
+                  Container(
+                    width: 30,
 //                 color:Colors.green,
-              child:Text("7:30"),
+                    child: Text(duration.toString().split('.').first),
+                  ),
+                ],
               ),
-            ],
             ),
-            ),
-          
+
             SizedBox(height: 30),
 
             Row(
@@ -134,33 +170,22 @@ class _PlayerPageState extends State<PlayerPage> {
 //                    onTap:(){}
 //                  ),
                 IconButton(
-                    icon: Icon(
-                        _isFavourite ? Icons.favorite : Icons.favorite_border,
-                        color: Colors.black),
+                    icon: Icon(_isFavourite ? Icons.favorite : Icons.favorite_border, color: Colors.black),
                     onPressed: () {
                       setState(() {
                         _isFavourite = !_isFavourite;
                       });
                     }),
-                IconButton(
-                    icon: Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () {}),
+                IconButton(icon: Icon(Icons.arrow_back, color: Colors.black), onPressed: () {}),
                 FlatButton(
-                    child: Icon(
-                        _isPlaying
-                            ? Icons.pause_circle_filled_rounded
-                            : Icons.play_circle_outline,
-                        size: 50,
-                        color: Colors.black),
+                    child: Icon(_isPlaying ? Icons.play_circle_outline : Icons.pause_circle_filled_rounded , size: 50, color: Colors.black),
                     onPressed: () {
                       setState(() {
-                        _isPlaying? resumeAudio():pauseAudio();
+                        _isPlaying ? resumeAudio():pauseAudio();
                         _isPlaying = !_isPlaying;
                       });
                     }),
-                IconButton(
-                    icon: Icon(Icons.arrow_forward, color: Colors.black),
-                    onPressed: () {}),
+                IconButton(icon: Icon(Icons.arrow_forward, color: Colors.black), onPressed: () {}),
                 IconButton(
                     icon: Icon(_isShuffle ? Icons.shuffle : Icons.loop),
                     onPressed: () {
@@ -176,3 +201,4 @@ class _PlayerPageState extends State<PlayerPage> {
     );
   }
 }
+
